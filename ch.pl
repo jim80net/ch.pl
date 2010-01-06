@@ -37,11 +37,11 @@ if ($chports == "all") {
 }
 if ($chports == "") {
 	$all = 0;
-	@ports = (21,22,25,53,80,110,443,2087,3389,8443,23794);
+	@ports = (21,22,25,53,80,110,443,1581,2087,3389,8443,23794);
 	}	
 if ($chports == "default") {
 	$all = 0;
-	@ports = (21,22,25,53,80,110,443,2087,3389,8443,23794);
+	@ports = (21,22,25,53,80,110,443,1581,2087,3389,8443,23794);
 	}	
 #####
 ##First header
@@ -114,6 +114,18 @@ if ($rdp == 1) {
 			system $cmd;
 		}
 }
+if ($Tivoli == 1) {
+	print "......................\n. Tivoli Client detected .......................\n\n";
+	print "Open in browser window?[y/N] ";
+	chomp($doit = <STDIN>);
+		if ($doit eq "y") {
+			print "starting Tivoli Client session\n";
+   			if ($os eq "linux") {$cmd = "firefox http://$ip:1581 &"};
+   			if ($os eq "darwin") {$cmd = "open http://$ip:1581 &"};
+   	 		if ($os eq "MSWin32") {$cmd = "C:/Progra~1/Mozill~1/firefox.exe http://$ip:1581"};
+			system $cmd;
+		}
+}
 if ($WHM == 1) {
 	print "....................\n.   WHM CAPABLE    .\n....................\n\n";
 	print "Open in browser window?[y/N] ";
@@ -167,6 +179,7 @@ foreach $port (@ports) {
                 print "OK\n";
 		$notdown = 1;
 		if ($port == 22) {$ssh = 1};
+		if ($port == 1581) {$Tivoli = 1};
 		if ($port == 2087) {$WHM = 1};
 		if ($port == 3389) {$rdp = 1};
 		if ($port == 8443) {$Plesk = 1};
