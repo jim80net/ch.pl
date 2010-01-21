@@ -1,0 +1,23 @@
+http://blog.jim80.net/2009/08/07/quick-and-dirty-port-check-ch-pl-v-0-1/
+
+The core of the following script is based off work first started by my coworker Trent. The gist of the little script is to perform a quick scan of a hostname or IP by simply attempting to open a socket. I use this when I want to run a quick “is it online” scan of a server and determine if ports of interest are available to me. I added the bit that would let me open them directly from the script without having to type in an alternate command.
+
+This is very much a poorly written hack-job script, and I very much expect that some of you will be able to identify some serious n00b mistakes (probably in that I still haven’t figured out how to properly localize variables), but hey, I don’t think this is half bad for my first PERL script. Yes, PERL. I’ve already been lectured about learning Python instead, but while that’s definitely on the to-do list, this script needed finishing, and I was already halfway through. It’s a tool that’s customized for me, so please hack away, and let me know what you do, as I may like it too!
+
+So, I present, for your consideration and for your critique (please do), ‘ch.pl’ v 0.1.
+
+I generally alias ch=/usr/local/bin/ch.pl for this script in Linux and MacOS, as this lets me leave the file extension the same for when I use it in Windows. To use this in Windows, you’ll need to install PERL first. I use ActivePerl. However please note, I’m still working on making this script Windows friendly.
+
+To install in Linux/MacOS:
+
+    * download ch.pl using FTP or wget to /usr/local/bin/
+    * chmod +x /usr/local/bin/ch.pl
+    * modify your ~/.bash_aliases file (ubuntu), or your ~/.bashrc (RedHat) to include the following:
+          o ‘alias ch=/usr/local/bin/ch.pl’
+
+Usage: ch [hostname or IP] [optional: port(s) to check, separated by commas]
+
+FILES: 
+
+ch.pl - main PERL script
+chfe.pl - a foreach version I'm still writing
