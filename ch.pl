@@ -100,15 +100,7 @@ if ($rdp == 1) {
 				$username = $unamein || $defaultUN; 
 				print "Enter Password:\n";
 				chomp($password = <STDIN>);
-				open (MYFILE, '>chout.tsc');
-				print MYFILE "full address:s:$ip\n" ;
-				print MYFILE "username:s:$username\n" ;
-				print MYFILE "password:b:$password\n";
-				print MYFILE "desktopheight:i:768\n";
-				print MYFILE "desktopwidth:i:1024\n";
-				close MYFILE;	
-				print "Connecting at 1024x768, this is hard coded. To change it, modify /bin/ch, lines 107-108\n";				
-				$cmd = "tsclient chout.tsc > /dev/null 2>&1 &"};
+				$cmd = "rdesktop -u $username -p $password $ip &"};
 			if ($os eq "darwin") {print "PSYCH!!! No RDP support on Macs quite yet (Im working on it, I promise)\n"};
 			if ($os eq "MSWin32") {$cmd = "mstsc /admin /v:$ip"};
 			system $cmd;
