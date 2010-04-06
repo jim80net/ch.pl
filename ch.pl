@@ -100,7 +100,7 @@ if ($rdp == 1) {
 				$username = $unamein || $defaultUN; 
 				print "Enter Password:\n";
 				chomp($password = <STDIN>);
-				$cmd = "rdesktop -u $username -p $password $ip &"};
+				$cmd = "rdesktop -f -u $username -p $password $ip &"};
 			if ($os eq "darwin") {print "PSYCH!!! No RDP support on Macs quite yet (Im working on it, I promise)\n"};
 			if ($os eq "MSWin32") {$cmd = "mstsc /admin /v:$ip"};
 			system $cmd;
@@ -143,7 +143,7 @@ if ($Plesk == 1) {
 		}
 }
 if ($Innominate == 1) {
-	print "......................\n. Innominate Firewall detected .......................\n\n";
+	print "......................\n. Innominate Firewall detected .\n......................\n\n";
 	print "Open in browser window?[y/N] ";
 	chomp($doit = <STDIN>);
 		if ($doit eq "y") {
