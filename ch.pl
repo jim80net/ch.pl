@@ -74,7 +74,7 @@ if ($ip eq "") {exit 0};
 # Handles for notdown events
 sub notdown {
 if ($ssh == 1) {
-	print "....................\n.   SSH CAPABLE    .\n....................\n\n";
+	print "\n....................\n.   SSH CAPABLE    .\n....................\n\n";
 	print "SSH?[y/N] ";
 	chomp($doit = <STDIN>);
 		if ($doit eq "y") {
@@ -89,7 +89,7 @@ if ($ssh == 1) {
 		}
 }
 if ($rdp == 1) {
-	print "....................\n.   RDP CAPABLE    .\n....................\n\n";
+	print "\n....................\n.   RDP CAPABLE    .\n....................\n\n";
 	print "Start RDP session?[y/N] ";
 	chomp($doit = <STDIN>);
 		if ($doit eq "y") {
@@ -100,14 +100,17 @@ if ($rdp == 1) {
 				$username = $unamein || $defaultUN; 
 				print "Enter Password:\n";
 				chomp($password = <STDIN>);
-				$cmd = "rdesktop -f -u $username -p $password $ip &"};
+				print "Attach to console? [y/N]";
+				chomp($console = <STDIN>);
+					if ($console eq "y") {$consolo = '-0 '}
+				$cmd = "rdesktop $consolo-f -u $username -p $password $ip &"};
 			if ($os eq "darwin") {print "PSYCH!!! No RDP support on Macs quite yet (Im working on it, I promise)\n"};
 			if ($os eq "MSWin32") {$cmd = "mstsc /admin /v:$ip"};
 			system $cmd;
 		}
 }
 if ($Tivoli == 1) {
-	print "......................\n. Tivoli Client detected .......................\n\n";
+	print "\n......................\n. Tivoli Client detected .......................\n\n";
 	print "Open in browser window?[y/N] ";
 	chomp($doit = <STDIN>);
 		if ($doit eq "y") {
@@ -119,7 +122,7 @@ if ($Tivoli == 1) {
 		}
 }
 if ($WHM == 1) {
-	print "....................\n.   WHM CAPABLE    .\n....................\n\n";
+	print "\n....................\n.   WHM CAPABLE    .\n....................\n\n";
 	print "Open in browser window?[y/N] ";
 	chomp($doit = <STDIN>);
 		if ($doit eq "y") {
@@ -131,7 +134,7 @@ if ($WHM == 1) {
 		}
 }
 if ($Plesk == 1) {
-	print "......................\n.   Plesk CAPABLE    .\n......................\n\n";
+	print "\n......................\n.   Plesk CAPABLE    .\n......................\n\n";
 	print "Open in browser window?[y/N] ";
 	chomp($doit = <STDIN>);
 		if ($doit eq "y") {
@@ -143,7 +146,7 @@ if ($Plesk == 1) {
 		}
 }
 if ($Innominate == 1) {
-	print "......................\n. Innominate Firewall detected .\n......................\n\n";
+	print "\n......................\n. Innominate Firewall detected .\n......................\n\n";
 	print "Open in browser window?[y/N] ";
 	chomp($doit = <STDIN>);
 		if ($doit eq "y") {
@@ -154,6 +157,8 @@ if ($Innominate == 1) {
 			system $cmd;
 		}
 }
+#formatting
+print "\n";
 exit 0
 }
 sub checkit {
@@ -191,7 +196,7 @@ if ($notdown == 1) {notdown};
 }
 checkit;
 if ($notdown == 0) {
-	print "......................\n                          Server does not appear to be online.\n" ;
+	print "\n......................\n                          Server does not appear to be online.\n" ;
 		print  " 0 to check until it responds, " ;
 		print " or specify the number of repetitions.[Enter to Quit]\n......................\n\n";
 		chomp($times = <STDIN>);
