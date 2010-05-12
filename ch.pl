@@ -99,11 +99,12 @@ if ($rdp == 1) {
 				chomp($unamein = <STDIN>);
 				$username = $unamein || $defaultUN; 
 				print "Enter Password:\n";
-				chomp($password = <STDIN>);
+				chomp($passwdin = <STDIN>);
+				$password = $passwdin || "password";	
 				print "Attach to console? [y/N]";
 				chomp($console = <STDIN>);
 					if ($console eq "y") {$consolo = '-0 '}
-				$cmd = "rdesktop $consolo-f -u $username -p $password $ip &"};
+				$cmd = "rdesktop ${$consolo}-f -u $username -p $password $ip &"};
 			if ($os eq "darwin") {print "PSYCH!!! No RDP support on Macs quite yet (Im working on it, I promise)\n"};
 			if ($os eq "MSWin32") {$cmd = "mstsc /admin /v:$ip"};
 			system $cmd;
