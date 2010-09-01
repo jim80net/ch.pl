@@ -22,8 +22,10 @@ use IO::Socket;
 use vars qw(@ports $ip $timeout $defaultUN);
 #
 $timeout = 0.25;
-# default username
-$defaultUN = "beach";
+# default username -SSH
+$defaultUN = "jpark";
+# default username - RDP
+$defaultUNMicrosoft = "\'corp\\jpark-admin\'";
 # which ports to check
 $chports = $ARGV[1];
 @ports = split(',',$chports);
@@ -37,11 +39,11 @@ if ($chports == "all") {
 }
 if ($chports == "") {
 	$all = 0;
-	@ports = (21,22,25,53,80,110,443,1581,2087,3389,8443,23794);
+	@ports = (21,22,25,53,80,110,143,443,465,902,903,993,995,1581,2087,3389,8443,23794);
 	}	
 if ($chports == "default") {
 	$all = 0;
-	@ports = (21,22,25,53,80,110,443,1581,2087,3389,8443,23794);
+	@ports = (21,22,25,53,80,110,143,443,465,902,903,993,995,1581,2087,3389,8443,23794);
 	}	
 #####
 ##First header
@@ -49,7 +51,7 @@ print "\n";
 print "##########################\n";
 $os = $^O;
 print "Running in: $os - ";
-   	 if ($os eq "linux") {print "Using: OpenSSH, tsclient, firefox \n"};
+   	 if ($os eq "linux") {print "Using: OpenSSH, rdesktop, firefox \n"};
    	 if ($os eq "darwin") {print "Using: OpenSSH, tsclient, open \n"};
    	 if ($os eq "MSWin32") {print "Using: putty, firefox \n"};
 #Resolve IP if hostname given, also, ensure a hostname is given
@@ -95,16 +97,20 @@ if ($rdp == 1) {
 		if ($doit eq "y") {
 			print "Connecting to $ip\n";
 			if ($os eq "linux") {
-				print "Username to connect as?[$defaultUN]\n";
+				print "Username to connect as?[$defaultUNMicrosoft]\n";
 				chomp($unamein = <STDIN>);
-				$username = $unamein || $defaultUN; 
+				$username = $unamein || $defaultUNMicrosoft; 
 				print "Enter Password:\n";
 				chomp($passwdin = <STDIN>);
 				$password = $passwdin || "password";	
+				print "Fullscreen? [y/N]";
+				chomp($fullscreenin = <STDIN>);
+					$screen = '-g 1024x800 ';
+					if ($fullscreenin eq "y") {$screen = '-f '};
 				print "Attach to console? [y/N]";
 				chomp($console = <STDIN>);
 					if ($console eq "y") {$consolo = '-0 '}
-				$cmd = "rdesktop ${$consolo}-f -u $username -p $password $ip &"};
+				$cmd = "rdesktop $screen$consolo-u $username -p $password $ip &"};
 			if ($os eq "darwin") {print "PSYCH!!! No RDP support on Macs quite yet (Im working on it, I promise)\n"};
 			if ($os eq "MSWin32") {$cmd = "mstsc /admin /v:$ip"};
 			system $cmd;
