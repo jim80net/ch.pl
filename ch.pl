@@ -16,16 +16,16 @@
 ###########################################################################################
 #
 use IO::Socket;
+use FindBin '$RealBin';
+
 #
 ##### Define some Initial Variables here
 #
 use vars qw(@ports $ip $timeout $defaultUN);
 #
-$timeout = 0.25;
-# default username -SSH
-$defaultUN = "jpark";
-# default username - RDP
-$defaultUNMicrosoft = "\'corp\\jpark-admin\'";
+require "$RealBin/etc/config.pl";
+
+$timeout = 0.20;
 # which ports to check
 $chports = $ARGV[1];
 @ports = split(',',$chports);
@@ -39,11 +39,11 @@ if ($chports == "all") {
 }
 if ($chports == "") {
 	$all = 0;
-	@ports = (21,22,25,53,80,110,143,443,465,902,903,993,995,1581,2087,3389,8443,23794);
+	@ports = (21,22,25,53,80,110,139,143,389,443,465,636,902,903,993,995,1581,2087,3389,8443,23794);
 	}	
 if ($chports == "default") {
 	$all = 0;
-	@ports = (21,22,25,53,80,110,143,443,465,902,903,993,995,1581,2087,3389,8443,23794);
+	@ports = (21,22,25,53,80,110,139,143,389,443,465,636,902,903,993,995,1581,2087,3389,8443,23794);
 	}	
 #####
 ##First header
@@ -100,17 +100,17 @@ if ($rdp == 1) {
 				print "Username to connect as?[$defaultUNMicrosoft]\n";
 				chomp($unamein = <STDIN>);
 				$username = $unamein || $defaultUNMicrosoft; 
-				print "Enter Password:\n";
-				chomp($passwdin = <STDIN>);
-				$password = $passwdin || "password";	
+				print "Password? [Enter to prompt]\n";
+				chomp($Passwordin = <STDIN>);
+				$Password = $Passwordin || '-' ; 
 				print "Fullscreen? [y/N]";
 				chomp($fullscreenin = <STDIN>);
-					$screen = '-g 1024x800 ';
+					$screen = '-g 1152x900 ';
 					if ($fullscreenin eq "y") {$screen = '-f '};
 				print "Attach to console? [y/N]";
 				chomp($console = <STDIN>);
 					if ($console eq "y") {$consolo = '-0 '}
-				$cmd = "rdesktop $screen$consolo-u $username -p $password $ip &"};
+				$cmd = "rdesktop $screen$consolo-u $username -p $Password $ip &"};
 			if ($os eq "darwin") {print "PSYCH!!! No RDP support on Macs quite yet (Im working on it, I promise)\n"};
 			if ($os eq "MSWin32") {$cmd = "mstsc /admin /v:$ip"};
 			system $cmd;
