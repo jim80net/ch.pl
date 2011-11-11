@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 #
 ###########################################################################################
-# ch.pl v 0.1
+# ch.pl v 0.2
 # this script checks for ports (defined below) and prompts user to open the pertinent ones
 # Written by jim80net, blog@jim80.net
 # 
@@ -25,7 +25,7 @@ use vars qw(@ports $ip $timeout $defaultUN);
 #
 require "$RealBin/etc/config.pl";
 
-$timeout = 0.20;
+$timeout = 0.15;
 # which ports to check
 $chports = $ARGV[1];
 @ports = split(',',$chports);
@@ -39,11 +39,11 @@ if ($chports == "all") {
 }
 if ($chports == "") {
 	$all = 0;
-	@ports = (21,22,25,53,80,110,139,143,389,443,465,636,902,903,993,995,1581,2087,3389,8443,23794);
+	@ports = (21,22,25,53,80,110,139,143,389,443,465,636,902,903,993,995,1433,1581,2087,3306,3389,8443,23794);
 	}	
 if ($chports == "default") {
 	$all = 0;
-	@ports = (21,22,25,53,80,110,139,143,389,443,465,636,902,903,993,995,1581,2087,3389,8443,23794);
+	@ports = (21,22,25,53,80,110,139,143,389,443,465,636,902,903,993,995,1433,1581,2087,3306,3389,8443,23794);
 	}	
 #####
 ##First header
@@ -57,10 +57,14 @@ print "Running in: $os - ";
 #Resolve IP if hostname given, also, ensure a hostname is given
 if ($ARGV[0]) {
 	if ($ARGV[0] !=~ /^([\d]{1,3}\.[\d]{1,3}\.[\d]{1,3}\.[\d]{1,3})$/) {
-    	print "\n";
-   	 if ($os eq "linux") {print `host $ARGV[0]`};
- 	 if ($os eq "darwin") {print `host $ARGV[0]`};
-   	 if ($os eq "MSWin32") {print `nslookup $ARGV[0]`};
+    		print "\n";
+   		if ($os eq "linux") {print `host $ARGV[0]`; $foundit = $?};
+ 		if ($os eq "darwin") {print `host $ARGV[0]`; $foundit = $?};
+   		if ($os eq "MSWin32") {print `nslookup $ARGV[0]`; $foundit = $?};
+	# process anyways if user supplied IP address
+	if ($ARGV[0] =~ /^([\d]{1,3}\.[\d]{1,3}\.[\d]{1,3}\.[\d]{1,3})$/) {
+		$foundit = 0
+		}
 	print "##########################\n";
  	print "\n";
 	}
@@ -68,11 +72,15 @@ if ($ARGV[0]) {
         $nports = @ports;
         $maxtime = $timeout * $nports;
 } 
+
 else { # last chance to try something else
 print "Hostname or IP to check?[enter to Quit]\n";
-chomp($ip = <STDIN>);
-if ($ip eq "") {exit 0};
-}
+chomp($ip = <STDIN>);}
+
+if ($foundit != 0) {
+	print "\nERROR: Cannot find scan target \n";
+	exit 2};
+
 # Handles for notdown events
 sub notdown {
 if ($ssh == 1) {
@@ -105,12 +113,13 @@ if ($rdp == 1) {
 				$Password = $Passwordin || '-' ; 
 				print "Fullscreen? [y/N]";
 				chomp($fullscreenin = <STDIN>);
-					$screen = '-g 1152x900 ';
+					$screen = '-g 1260x800 ';
+					if ($fullscreenin eq "n") {$screen = '-g 1260x800 '};
 					if ($fullscreenin eq "y") {$screen = '-f '};
 				print "Attach to console? [y/N]";
 				chomp($console = <STDIN>);
 					if ($console eq "y") {$consolo = '-0 '}
-				$cmd = "rdesktop $screen$consolo-u $username -p $Password $ip &"};
+				$cmd = "rdesktop $screen$consolo -r sound:remote -u $username -p $Password -a 16 $ip &"};
 			if ($os eq "darwin") {print "PSYCH!!! No RDP support on Macs quite yet (Im working on it, I promise)\n"};
 			if ($os eq "MSWin32") {$cmd = "mstsc /admin /v:$ip"};
 			system $cmd;
@@ -176,7 +185,7 @@ foreach $port (@ports) {
                 PeerAddr        => "$ip",
                 PeerPort        => $port,
                 Proto           => 'tcp',
-                Timeout         => 0.25
+                Timeout         => $timeout
         );
         if ($foo) {
         	print "  $ip:$port - ";
@@ -205,7 +214,7 @@ checkit;
 if ($notdown == 0) {
 	print "\n......................\n                          Server does not appear to be online.\n" ;
 		print  " 0 to check until it responds, " ;
-		print " or specify the number of repetitions.[Enter to Quit]\n......................\n\n";
+		print " or specify the number of repetitions.\n [Enter to Quit]\n......................\n\n";
 		chomp($times = <STDIN>);
 		$count = 1;
 			if ($times eq "0") {
